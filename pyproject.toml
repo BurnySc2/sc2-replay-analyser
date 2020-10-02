@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "burny_test_template"
+version = "0.1.0"
+description = ""
+authors = ["BuRny <gamingburny@gmail.com>"]
+packages = [
+    { include = "burny_test_template/*.py" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+# Numeric python
+numpy = "^1.19.1"
+# Improve performance by writing C or C++ similar code
+cython = "^3.0a6"
+# Write and read classes to/from json
+dataclasses-json = "^0.5.1"
+# Network access
+aiohttp = "^3.6.2"
+# Required by aiohttp on windows?
+idna-ssl = "^1.1.0"
+# Simple logger
+loguru = "^0.4.1"
+# Required by loguru on windows?
+aiocontextvars = "^0.2.2"
+atomicwrites = "^1.3.0"
+contextvars = "^2.4"
+win32-setctime = "^1.0.1"
+
+[tool.poetry.dev-dependencies]
+# Test library
+pytest = "^5.4.1"
+pytest-asyncio = "^0.10.0"
+# Requirement for pytest < 3.8
+importlib_metadata = "^1.7.0"
+# Statistical testing
+hypothesis = "^5.7.1"
+# Cyclomatic complexity checker
+radon = "^4.1.0"
+# Function profiler, checks how often functions get called
+snakeviz = "^2.1.0"
+# Line profiler, unable to install on windows?
+# line_profiler = "^3.0.2"
+# Required by line_profiler
+# ipython = "^7.16.1"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

@@ -1,0 +1,90 @@
+name: RunTests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        python-version: [3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Use pip requirements.txt cache https://github.com/actions/cache/blob/master/examples.md#python---pip
+      # Apparently you can't use cache when using pipenv (but perhaps when specifying the pipenv environment folder?)
+
+      - name: Install poetry
+        run: |
+          python -m pip install poetry
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Test with pytest
+        run: |
+          poetry run pytest
+
+      - name: Run main.py
+        run: |
+          poetry run python main.py
+
+      - name: Run radon (cyclomatic complexity report)
+        # './' denotes the current directory
+        run: |
+          poetry run radon cc ./ -a -nb
+
+      - name: Build
+        run: |
+          poetry build
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.7'
+
+      # Publish package on pypi
+      - name: Publish
+        continue-on-error: true
+        run: |
+          poetry publish --username ${{ secrets.pypi_username }} --password ${{ secrets.pypi_password }}
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.7'
+
+#      # Push files to remote server
+#      # https://github.com/marketplace/actions/scp-files
+#      # https://github.com/appleboy/scp-action/blob/master/action.yml
+#      - name: Copy files via ssh passphrase
+#        uses: appleboy/scp-action@master
+#        with:
+#          # Host ip address
+#          host: ${{ secrets.HOST }}
+#          port: 22
+#          # My username on the host machine
+#          username: ${{ secrets.USERNAME }}
+#          # Contents of .ssh/id_dsa, private RSA key
+#          key: ${{ secrets.KEY }}
+#          # Passphrase to decrypt private key
+#          passphrase: ${{ secrets.PASSPHRASE }}
+#          source: "."
+#          target: "/home/burnysc2/temp"
+#        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.7'
+
+#      # Log in to remote host and execute scripts
+#      - name: Executing remote ssh commands using passphrase
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          port: 22
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.KEY }}
+#          passphrase: ${{ secrets.PASSPHRASE }}
+#          script: |
+#            cd /home/burnysc2/temp
+#            python3.8 -m pip install poetry --user
+#            python3.8 -m poetry install --no-dev
+#        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.7'
