@@ -1,60 +1,49 @@
-[![Actions Status](https://github.com/BurnySc2/python-template/workflows/RunTests/badge.svg)](https://github.com/BurnySc2/python-template/actions)
+[![Actions Status](https://github.com/BurnySc2/sc2-replay-analyser/workflows/RunTests/badge.svg)](https://github.com/BurnySc2/sc2-replay-analyser/actions)
 
-# python-template
-Template for any of my upcoming Python projects
+# SC2 Replay Analyser
+Work in progress
 
+A python analyser library to extract StarCraft II build orders (for now).
 
-# Useful Poetry commands
-https://python-poetry.org/docs/cli/
-### Create new project
-`poetry init`
+# Installation
+```
+pip install poetry
+poetry install
+```
 
-or
+Run with 
+```
+poetry run python main.py
+```
 
-`poetry new <project-name>`
-### Install dependencies
-`poetry install`
+# Replay Analysis
+### Disclaimer
+For units and upgrades, they will only show up in the parsed list of events, if they finished within the replay.
+That means if you start `Stimpack` research but end the game while `Stimpack` has not been finished researching, it will not show up in the list.
+### Example: Extract build order
+TODO
 
-`poetry install --no-dev`
-### Add dependencies
-`poetry add <package-name>`
+# Development
+## Run Tests
+Run all tests
 
-Add dev dependency:
-
-`poetry add <package-name> --dev`
-### Remove dependencies
-`poetry remove <package-name>`
-### Update dependencies
-`poetry update`
-### List of packages
-`poetry show`
-### Validate pyproject.toml
-`poetry check`
-### Build
-`poetry build`
-### Publish
-`poetry publish`
-### Run a file
-`poetry run pytest`
-
-`poetry run main.py`
-### Write requirements.txt from Poetry lock file
-`poetry export -f requirements.txt > requirements.txt`
-
-
-# Run python files
-- install `poetry` using command `pip install poetry`
-- run the python file `main.py` using `poetry run main.py`
-- or `poetry shell` and then run `main.py`
-
-
-# Run Tests
-Single file:
-`poetry run pytest test/test_functions.py`
-
-Test all files in folder:
 `poetry run pytest test/`
 
+# TODO Features
 
-
-
+## Macro analysis
+### All races
+- How long supply blocked
+### Terran
+- How long CCs were idle
+- How long production was idle
+- How long ebays were idle after they finished constructing
+- How much was armoy delayed for 2-2
+- Extract important timings: Upgrade finished
+- Graphs: 
+    - worker supply
+    - army supply
+    - total supply
+    - money in bank
+    - amount of free supply (max supply - used supply)
+    
