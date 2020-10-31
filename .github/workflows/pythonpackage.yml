@@ -30,9 +30,9 @@ jobs:
         run: |
           poetry install
 
-      - name: Test with pytest
-        run: |
-          poetry run pytest
+#      - name: Test with pytest
+#        run: |
+#          poetry run pytest
 
       - name: Run main.py
         run: |
