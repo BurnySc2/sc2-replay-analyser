@@ -1,18 +1,16 @@
 [tool.poetry]
-name = "burny_test_template"
+name = "sc2replayanalyser"
 version = "0.1.0"
 description = ""
 authors = ["BuRny <gamingburny@gmail.com>"]
 packages = [
-    { include = "burny_test_template/*.py" },
+    { include = "sc2replayanalyser/*.py" },
+    { include = "sc2replayanalyser/data.json" },
+    { include = "sc2replayanalyser/sc2planner_customactions.json" },
 ]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-# Numeric python
-numpy = "^1.19.1"
-# Improve performance by writing C or C++ similar code
-cython = "^3.0a6"
 # Write and read classes to/from json
 dataclasses-json = "^0.5.1"
 # Network access
@@ -20,17 +18,21 @@ aiohttp = "^3.6.2"
 # Required by aiohttp on windows?
 idna-ssl = "^1.1.0"
 # Simple logger
-loguru = "^0.4.1"
+loguru = "^0.5.3"
 # Required by loguru on windows?
 aiocontextvars = "^0.2.2"
 atomicwrites = "^1.3.0"
 contextvars = "^2.4"
 win32-setctime = "^1.0.1"
+# Get constants that sc2-planner uses
+burnysc2 = "^5.0.3"
+# Get sc2 replay parser library
+sc2reader = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
 # Test library
-pytest = "^5.4.1"
-pytest-asyncio = "^0.10.0"
+pytest = "^6.1.1"
+pytest-asyncio = "^0.14.0"
 # Requirement for pytest < 3.8
 importlib_metadata = "^1.7.0"
 # Statistical testing
