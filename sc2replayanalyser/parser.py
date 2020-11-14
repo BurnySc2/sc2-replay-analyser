@@ -14,14 +14,6 @@ from .models import *
 from .constants import *
 from .helper import *
 
-from pathlib import Path
-
-data_json_path = Path(__file__).parent / "data.json"
-with data_json_path.open() as f:
-    data = json.load(f)
-UNITS_BY_NAME = {unit["name"]: unit for unit in data["Unit"]}
-UPGRADE_BY_NAME = {upgrade["name"]: upgrade for upgrade in data["Upgrade"]}
-
 
 def add_event(
     my_list: List[BuildOrderItem], unit_name: str, start_frame: int, is_upgrade: bool = False, is_action: bool = False
@@ -92,7 +84,7 @@ def parse_tracker_events(replay: Replay, player_id: int):
     """
     filtered_events: List[Event] = list(
         filter(
-            lambda e: e.frame > 0
+            lambda e: e.frame >= 0
             and (
                 isinstance(e, (UnitBornEvent, UnitInitEvent))
                 and hasattr(e, "control_pid")
@@ -192,23 +184,21 @@ def parse_tracker_events(replay: Replay, player_id: int):
                 unit_name: str = e.unit.name[:-4] if e.unit.name in RICH_GAS_STRUCTURES else e.unit.name
                 add_event(events, unit_name, e.frame)
 
-        # Initial CC morphed
+        # Initial structures
         elif (
-            isinstance(e, UnitTypeChangeEvent)
+            isinstance(e, UnitBornEvent)
             and e.unit.name in CCs
             and e.unit_id not in tracked_unit_type_changed
+            and e.frame <= 0
             and hasattr(e.unit, "type_history")
         ):
             tracked_unit_type_changed.add(e.unit_id)
             for index, (frame, unit_type) in enumerate(e.unit.type_history.items()):
                 unit_type: UnitType
-                if index > 0 and unit_type.name == "OrbitalCommand":
-                    # Track OC morphs of new command centers
-                    start_frame = frame - UNITS_BY_NAME[unit_type.name]["time"]
-                    add_event(events, unit_type.name, start_frame)
-
-        # elif isinstance(e, UnitTypeChangeEvent) and (e.unit.name.endswith("TechLab") or e.unit.name.endswith("Reactor")) and e.unit_id not in tracked_unit_type_changed:
-        #     print()
+                # if index > 0 and unit_type.name == "OrbitalCommand":
+                # Track OC morphs of new command centers
+                start_frame = frame - UNITS_BY_NAME[unit_type.name]["time"]
+                add_event(events, unit_type.name, start_frame)
 
         # Upgrade finished
         elif isinstance(e, UpgradeCompleteEvent) and e.upgrade_type_name in UPGRADE_BY_NAME:
@@ -233,6 +223,8 @@ def parse_tracker_events(replay: Replay, player_id: int):
             events_unhandled.append(e)
             if hasattr(e, "unit") and hasattr(e.unit, "name"):
                 logger.warning(f"Unhandled event: {type(e)} {convert_frame_to_time(e.frame)} {e.unit.name}")
+            elif isinstance(e, UpgradeCompleteEvent):
+                logger.warning(f"Unhandled event: {type(e)} {convert_frame_to_time(e.frame)} {e.upgrade_type_name}")
             else:
                 logger.warning(f"Unhandled event: {type(e)} {convert_frame_to_time(e.frame)}")
 

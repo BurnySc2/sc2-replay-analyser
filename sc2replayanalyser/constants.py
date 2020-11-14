@@ -1,4 +1,6 @@
 from typing import Set, Dict, List
+from pathlib import Path
+import json
 
 # ADDON_LOOKUP = {
 #     "BuildBarracksTechlab": 60,
@@ -53,3 +55,10 @@ ACTIONS: Set[str] = {
     "MULE",
     "3worker_to_gas",
 }
+
+
+data_json_path = Path(__file__).parent / "data.json"
+with data_json_path.open() as f:
+    data = json.load(f)
+UNITS_BY_NAME = {unit["name"]: unit for unit in data["Unit"]}
+UPGRADE_BY_NAME = {upgrade["name"]: upgrade for upgrade in data["Upgrade"]}

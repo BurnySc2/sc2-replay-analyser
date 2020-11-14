@@ -52,33 +52,16 @@ async def main():  # Release version and game length info. Nothing else
 
     # Also loads game events:
     replay: Replay = sc2reader.load_replay(str(replay_path), load_level=4)
-    # events = list(
-    #     filter(
-    #         lambda x:
-    #         not isinstance(
-    #             x,
-    #             (
-    #                 ControlGroupEvent,
-    #                 SelectionEvent,
-    #                 CameraEvent,
-    #                 ProgressEvent,
-    #                 UserOptionsEvent,
-    #                 UpdateTargetPointCommandEvent,
-    #                 UpdateTargetUnitCommandEvent,
-    #             )
-    #         ) and
-    #         (not hasattr(x, "ability_name") or x.ability_name not in {"RightClick", "Attack", "ReturnCargo"}),
-    #         replay.player[1].events,
-    #     )
-    # )
-    # events2 = list(filter(lambda x: x.frame > 0 and not isinstance(x, (PlayerStatsEvent)) and hasattr(x, "control_pid"), replay.player[1].events))
     my_action_events = parse_action_events(replay, 1)
     my_events = parse_tracker_events(replay, 1)
 
+    # All events include units and structures from the start of the game
     all_events = my_action_events + my_events
     all_events.sort(key=lambda k: k.frame)
-    shorten = list(filter(lambda x: x.frame < 22.4 * 5 * 60 + 0, all_events))
-    link = create_link("terran", shorten)
+
+    # Exclude workers or structures that spawned at frame 0, since they are not part of the build order
+    shortened = list(filter(lambda x: 0 < x.frame < 22.4 * 5 * 60 + 0, all_events))
+    link = create_link("terran", shortened)
     # "002eJyLrlbKTFGyMjHVUSqpLEhVslIqzy/KTi1Sqo0FAHMmCK8="
     # link = create_link("terran", all_events)
     print(link)

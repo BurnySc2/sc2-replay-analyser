@@ -35,15 +35,20 @@ Run all tests
 ### All races
 - How long supply blocked
 ### Terran
-- How long CCs were idle
-- How long production was idle
+- CC count
+- Production count
+- How long CCs were idle (not making SCVs)
+- How long production was idle (not making units)
 - How long ebays were idle after they finished constructing
-- How much was armoy delayed for 2-2
+- How much was armoy delayed/late for 2-2
 - Extract important timings: Upgrade finished
 - Graphs: 
     - worker supply
     - army supply
     - total supply
     - money in bank
-    - amount of free supply (max supply - used supply)
-    
+    - amount of free supply (max supply) 
+    - used supply
+- Comparison between 2 (or more) replays: example / ideal build
+
+

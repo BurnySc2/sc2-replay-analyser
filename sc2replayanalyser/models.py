@@ -62,8 +62,21 @@ class MyPlayer(DataClassJsonMixin):
 @dataclass
 class BuildOrderItem(DataClassJsonMixin):
     name: str
+    # The id  of the unit
     id: int
+    # One of: ["worker", "structure", "unit", "upgrade", "action"]
     type: str
-    # type: Literal["worker", "structure", "unit", "upgrade", "action"]
+    # When the creation process started
     frame: int
+    # frame / 22.4
     time: str
+    # Which unit tag created this unit / structure / upgrade
+    created_by: Optional[int] = None
+    # When the creation process finishes
+    finished_frame: Optional[int] = None
+
+    def __post_init__(self):
+        if self.type in {"worker", "unit", "structure"}:
+            self.finished_frame = self.frame + UNITS_BY_NAME[self.name]["time"]
+        elif self.type in {"upgrade"}:
+            self.finished_frame = self.frame + UPGRADE_BY_NAME[self.name]["cost"]["time"]
