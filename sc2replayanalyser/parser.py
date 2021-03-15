@@ -18,9 +18,9 @@ from .helper import *
 def add_event(
     my_list: List[BuildOrderItem], unit_name: str, start_frame: int, is_upgrade: bool = False, is_action: bool = False
 ):
-    unit_id: int = -1 if is_action else UPGRADE_BY_NAME[unit_name]["id"] if is_upgrade else UNITS_BY_NAME[unit_name][
-        "id"
-    ]
+    unit_id: int = (
+        -1 if is_action else UPGRADE_BY_NAME[unit_name]["id"] if is_upgrade else UNITS_BY_NAME[unit_name]["id"]
+    )
     event_type: str = (
         "action"
         if is_action
@@ -32,7 +32,15 @@ def add_event(
         if UNITS_BY_NAME[unit_name]["is_structure"]
         else "unit"
     )
-    my_list.append(BuildOrderItem(unit_name, unit_id, event_type, start_frame, convert_frame_to_time(start_frame),))
+    my_list.append(
+        BuildOrderItem(
+            unit_name,
+            unit_id,
+            event_type,
+            start_frame,
+            convert_frame_to_time(start_frame),
+        )
+    )
 
 
 def parse_action_events(replay: Replay, player_id: int):
@@ -171,12 +179,18 @@ def parse_tracker_events(replay: Replay, player_id: int):
                         if was_dettach:
                             action_name = f"dettach_{structure_type.lower()}_from_{addon_type.lower()}"
                             add_event(
-                                events, action_name, frame, is_action=True,
+                                events,
+                                action_name,
+                                frame,
+                                is_action=True,
                             )
                         else:
                             action_name = f"attach_{structure_type.lower()}_to_free_{addon_type.lower()}"
                             add_event(
-                                events, action_name, frame, is_action=True,
+                                events,
+                                action_name,
+                                frame,
+                                is_action=True,
                             )
                         previous_type_name = unit_name
 
